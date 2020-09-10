@@ -9,5 +9,11 @@ body {
 }
 
 .marker {
-  stroke: #f8c102;
+  /* stroke: #f8c102; */
+  
+  transform: translate(-50%, -100%)
+}
+
+.popup {
+  max-width: 300px;
 }
