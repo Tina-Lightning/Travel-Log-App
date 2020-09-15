@@ -17,13 +17,14 @@ const App = () => {
     zoom: 3
   });
 
-  // useEffect behaves like componentDidMount in that we can create a function that only runs once
-  useEffect(() => {
-    (async () => {
+    const getEntries = async () => {
       const logEntries = await listLogEntries();
       setLogEntries(logEntries);
-    })();
+    };
 
+  // useEffect behaves like componentDidMount in that we can create a function that only runs once
+  useEffect(() => {
+    getEntries();
   }, []);
 
   const showAddMarkerPopup = (event) => {
@@ -44,9 +45,8 @@ const App = () => {
     >
       {
         logEntries.map(entry => (
-          <>
+          <React.Fragment key={entry._id} >
             <Marker
-              key={entry._id}
               latitude={entry.latitude}
               longitude={entry.longitude}
             >
@@ -91,11 +91,12 @@ const App = () => {
                     <h3>{entry.title}</h3>
                     <p>{entry.comments}</p>
                     <small>Visited on: {new Date(entry.visitDate).toLocaleDateString()}</small>
+                    {entry.image ? <img src={entry.image} alt={entry.title} /> : null}
                   </div>
                 </Popup>
               ) : null
             }
-          </>
+          </React.Fragment>
         ))
       }
       {
@@ -137,7 +138,11 @@ const App = () => {
               onClose={() => setAddEntryLocation(null)}
               anchor="top" >
               <div className="popup">
-                <LogEntryForm location={addEntryLocation} />
+                <LogEntryForm onClose={() => {
+                  setAddEntryLocation(null);
+                  getEntries();
+                }}
+                location={addEntryLocation} />
               </div>
             </Popup>
           </>
